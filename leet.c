@@ -17,21 +17,26 @@ void hexdump(uintmax_t address, size_t n, unsigned char buf[static n])
 		n = BUFSIZE;
 	}
 
-	printf("\033[1m\r%015jx ", address);
-	for (size_t i = 0; i < n; i++) {
-		printf("\033[%hhdm%02hhx\033[0m ", COLOR(buf[i]), buf[i]);
-		usleep(100 * buf[i]);
-	}
-	for (size_t i = n; i < BUFSIZE; i++) {
-		printf("-- ");
-	}
+	unsigned char ch = buf[n - 1];
+	for (int c = 0; c < ch; c++) {
+		buf[n - 1] = c;
 
-	for (size_t i = 0; i < n; i++) {
-		printf("\033[%hhdm%c\033[0m", COLOR(buf[i]), isprint(buf[i]) ? buf[i] : '.');
-		usleep(100 * buf[i]);
-	}
-	for (size_t i = n; i < 16; i++) {
-		printf(".");
+		printf("\033[1m\r%015jx ", address);
+		for (size_t i = 0; i < n; i++) {
+			printf("\033[%hhdm%02hhx\033[0m ", COLOR(buf[i]), buf[i]);
+			//usleep(100 * buf[i]);
+		}
+		for (size_t i = n; i < BUFSIZE; i++) {
+			printf("-- ");
+		}
+
+		for (size_t i = 0; i < n; i++) {
+			printf("\033[%hhdm%c\033[0m", COLOR(buf[i]), isprint(buf[i]) ? buf[i] : '.');
+			usleep(100 * buf[i]);
+		}
+		for (size_t i = n; i < 16; i++) {
+			printf(".");
+		}
 	}
 }
 
